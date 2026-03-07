@@ -1,0 +1,22 @@
+{
+  "id": "i1",
+  "name": "ماء ٥٠٠ مل",
+  "url": "su",
+  "images": ["su.webp"],
+  "price": 10,
+  "weight": { "value": 500, "unit": "ml" },
+  "category": { "name": "مشروبات", "url": "icecekler" },
+  "shortDesc": "مياه شرب في زجاجة بلاستيكية ٥٠٠ مل.",
+  "metaDesc": "زجاجة بلاستيكية ٥٠٠ مل من مياه الشرب.",
+  "keywords": "ماء, مياه شرب, ٥٠٠ مل ماء, زجاجة ماء",
+  "longDesc": [
+    "معبأة كمياه ينبوعية طبيعية أو مياه شرب.",
+    "متوفرة في زجاجة بلاستيكية ٥٠٠ مل.",
+    "يُفضَّل تناولها باردة."
+  ],
+  "otherDesc": [
+    { "name": "نوع التعبئة", "value": "زجاجة بلاستيكية", "type": "spec" },
+    { "name": "التخزين", "value": "يُحفظ في مكان نظيف وبارد وخالٍ من الروائح.", "type": "info" }
+  ],
+  "aggregateRating": { "ratingValue": "5", "reviewCount": "9", "bestRating": "5", "worstRating": "1" }
+}

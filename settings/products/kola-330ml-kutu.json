@@ -1,0 +1,23 @@
+{
+  "id": "i4",
+  "name": "كولا ٣٣٠ مل",
+  "url": "kola-330ml-kutu",
+  "images": ["kola-330ml-kutu.webp"],
+  "price": 35,
+  "weight": { "value": 330, "unit": "ml" },
+  "category": { "name": "مشروبات", "url": "icecekler" },
+  "shortDesc": "مشروب كولا غازي في علبة ٣٣٠ مل.",
+  "metaDesc": "علبة ٣٣٠ مل من مشروب الكولا الغازي. يُفضَّل تناوله بارداً.",
+  "keywords": "كولا, ٣٣٠ مل كولا, مشروب غازي, علبة",
+  "longDesc": [
+    "مشروب غازي يحتوي على كافيين.",
+    "متوفر في علبة ألومنيوم ٣٣٠ مل.",
+    "يُفضَّل تناوله بارداً.",
+    "مناسب لمرافقة الوجبات."
+  ],
+  "otherDesc": [
+    { "name": "التخزين", "value": "يُحفظ في مكان بارد بعيداً عن أشعة الشمس.", "type": "info" },
+    { "name": "معلومات المكونات", "value": "يحتوي على كافيين.", "type": "spec" }
+  ],
+  "aggregateRating": { "ratingValue": "5", "reviewCount": "7", "bestRating": "5", "worstRating": "1" }
+}

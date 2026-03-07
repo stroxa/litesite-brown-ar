@@ -1,0 +1,79 @@
+/* ── RTL overrides for html[lang="ar"] ───────── */
+html[lang="ar"] {
+  direction: rtl;
+}
+
+html[lang="ar"] body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
+html[lang="ar"] header {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .logo-link {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] nav div {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] ul.prd li {
+  text-align: center;
+}
+
+html[lang="ar"] .pdt {
+  text-align: right;
+}
+
+html[lang="ar"] .pdt > b {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .tab-nav {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .footer-contact {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .footer-contact div,
+html[lang="ar"] .footer-contact a {
+  text-align: right;
+}
+
+html[lang="ar"] .footer-links {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] .lang {
+  flex-direction: row-reverse;
+}
+
+html[lang="ar"] table {
+  text-align: right;
+}
+
+html[lang="ar"] th {
+  text-align: right;
+}
+
+html[lang="ar"] address {
+  text-align: right;
+}
+
+html[lang="ar"] article {
+  text-align: right;
+}
+
+html[lang="ar"] article ul {
+  padding-right: 1.5rem;
+  padding-left: 0;
+  text-align: right;
+}
+
+html[lang="ar"] #basket .wrap {
+  text-align: right;
+}

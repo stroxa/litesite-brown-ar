@@ -1,0 +1,32 @@
+{
+  "name": "Çorbacı",
+  "legalName": "Çorbacı لخدمات الغذاء والطعام",
+  "address": [
+    "Zekeriyaköy Mah. Orman Cad. No 12",
+    "Sarıyer إسطنبول"
+  ],
+  "map": "#",
+  "phone": "+90 212 000 00 00",
+  "email": "siparis@corbaci.com",
+  "instagram": "#",
+  "facebook": "#",
+  "linkedin": "#",
+  "whatsapp": "+90 532 000 00 00",
+  "slogan": "نكهات تقليدية بخبرة تمتد لقرون.",
+  "description": "Çorbacı تقدم شوربة الكوارع الطازجة والمشروبات التقليدية المحضّرة بالطرق الأصيلة إلى باب منزلك.",
+
+  "currency": "TRY",
+  "currencySymbol": "₺",
+  "priceValidUntilDays": 30,
+
+  "brand": "Çorbacı",
+
+  "manufacturer": {
+    "name": "Çorbacı لخدمات الغذاء والطعام",
+    "identifier": "TR34-0002",
+    "phone": "+902120000000",
+    "address": "Atatürk Caddesi No: 1",
+    "city": "إسطنبول",
+    "country": "TR"
+  }
+}

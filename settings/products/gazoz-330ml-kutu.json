@@ -1,0 +1,22 @@
+{
+  "id": "i6",
+  "name": "مشروب فواكه غازي ٣٣٠ مل",
+  "url": "gazoz-330ml-kutu",
+  "images": ["gazoz-330ml-kutu.webp"],
+  "price": 30,
+  "weight": { "value": 330, "unit": "ml" },
+  "category": { "name": "مشروبات", "url": "icecekler" },
+  "shortDesc": "مشروب غازي بنكهة الفواكه في علبة ٣٣٠ مل.",
+  "metaDesc": "علبة ألومنيوم ٣٣٠ مل من المشروب الغازي بنكهة الفواكه. يُفضَّل تناوله بارداً.",
+  "keywords": "مشروب غازي, غازوز, ٣٣٠ مل, نكهة فواكه, علبة",
+  "longDesc": [
+    "مشروب غازي بنكهة الفواكه.",
+    "متوفر في علبة ألومنيوم ٣٣٠ مل.",
+    "يُفضَّل تناوله بارداً."
+  ],
+  "otherDesc": [
+    { "name": "نوع التعبئة", "value": "علبة ألومنيوم", "type": "spec" },
+    { "name": "التخزين", "value": "يُحفظ في مكان بارد بعيداً عن أشعة الشمس.", "type": "info" }
+  ],
+  "aggregateRating": { "ratingValue": "5", "reviewCount": "5", "bestRating": "5", "worstRating": "1" }
+}

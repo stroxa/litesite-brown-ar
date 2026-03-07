@@ -1,0 +1,71 @@
+{
+  "domain": "https://corbaci.com/ar",
+  "siteRoot": "/ar/",
+  "cachePrefix": "corbaci-ar",
+  "lang": "ar",
+  "langSwitch": [
+    { "label": "TR", "url": "https://corbaci.com",    "lang": "tr" },
+    { "label": "EN", "url": "https://corbaci.com/en", "lang": "en" },
+    { "label": "AR", "url": "https://corbaci.com/ar", "lang": "ar" }
+  ],
+  "rootPages": ["index", "404"],
+  "pagesDir": "pages",
+  "productsDir": "products",
+  "isCategoryCollapsable": true,
+  "productSections": [
+    { "key": "taze-corbalar",        "label": "شوربات طازجة"   },
+    { "key": "dondurulmus-corbalar", "label": "شوربات مجمدة"   },
+    { "key": "icecekler",            "label": "مشروبات"        }
+  ],
+
+  "offlineWarning": "لا يوجد اتصال بالإنترنت. يرجى التحقق من شبكتك.",
+  "taxIncluded": "شامل الضريبة",
+  "basketWarning": "بعد إضافة المنتجات إلى سلة التسوق،<br/>انقر على زر 'طلب عبر واتساب'<br/>لإرسال طلبك وعنوان التسليم<br/>وإتمام عملية الشراء بسهولة.",
+  "whatsAppWarning": "إذا لم تكن تستخدم واتساب،<br/>يمكنك التواصل معنا على siparis@corbaci.com<br/>للطلبات والاستفسارات.",
+  "shippingWarning": "التوصيل مجاني للطلبات في المنطقة القريبة.",
+
+  "headerHero": {
+    "img": "hero-header.webp",
+    "text": [
+      "وصفات متوارثة عبر الأجيال، نكهات لا تُنسى.",
+      ""
+    ]
+  },
+
+  "assets": {
+    "css": ["css/base.css", "css/layout.css",
+            "css/page.css", "css/product.css", "css/basket.css", "css/rtl.css"],
+    "js": ["js/lazy.js", "js/off.js", "js/menu.js", "js/helper.js", "js/basket.js"],
+    "cssOutput": "site.css",
+    "jsOutput": "site.js"
+  },
+
+  "labels": {
+    "pages": "الصفحات",
+    "products": "القائمة",
+    "address": "العنوان",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "showOnMap": "عرض على الخريطة",
+    "productDescTab": "الوصف",
+    "productSpecsTab": "المواصفات",
+    "addToBasket": "أضف إلى السلة",
+    "emptyBasket": "سلة التسوق فارغة",
+    "productsLinkText": "قائمتنا",
+    "emptyBasketDesc": "لتصفح المنتجات وإضافتها إلى سلة التسوق.",
+    "basket": "السلة",
+    "myBasket": "سلتي",
+    "itemSuffix": "منتج",
+    "for": "لـ",
+    "openBasket": "فتح السلة",
+    "closeBasket": "إغلاق السلة",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "التوصيل",
+    "freeShipping": "مجاني",
+    "total": "الإجمالي",
+    "delete": "حذف",
+    "unit": "الكمية",
+    "whatsAppOrder": "الطلب عبر واتساب",
+    "whatsAppGreeting": "مرحباً، أرغب في تقديم طلب:"
+  }
+}

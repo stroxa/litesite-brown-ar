@@ -1,0 +1,119 @@
+:root {
+  --bg:      #e4d5c0;
+  --surface: #f0e6d8;
+  --surface2: #faf4ec;
+  --accent:  #8b5e3c;
+  --accent2: #7a4020;
+  --text:    #3d2b1f;
+  --muted:   #8a6b54;
+  --border:  #cdb898;
+  --white:   #fff;
+  --shadow:  rgba(62,40,25,.14);
+
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-sans:  system-ui, -apple-system, sans-serif;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--surface);
+}
+
+html,
+body,
+header,
+main,
+footer,
+section,
+article,
+div,
+menu,
+nav,
+ul,
+li,
+h1,
+h2,
+h3,
+h4,
+p,
+address,
+table,
+td,
+th,
+button,
+input,
+label {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+menu,
+ul,
+li {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+html {
+  height: 100%;
+  font-size: 16px;
+}
+
+body {
+  min-height: 100%;
+  background: var(--bg);
+  font-family: var(--font-sans);
+  color: var(--text);
+  text-align: center;
+}
+
+main {
+  padding: 0;
+  background: var(--bg);
+}
+
+main > :not(.hero):not(.page-img) {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.hidden {
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.off {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  visibility: hidden;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(139, 94, 60, 0.95);
+  color: var(--white);
+  font-weight: bold;
+  font-size: 0.9rem;
+}

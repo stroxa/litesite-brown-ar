@@ -1,0 +1,8 @@
+{
+  "title": "خريطة الموقع | Çorbacı",
+  "description": "خريطة الموقع التي تسرد جميع صفحات ومنتجات موقع Çorbacı.",
+  "keywords": "خريطة موقع corbaci",
+  "showOnFooter": true,
+  "isSiteMap": true,
+  "partials": ["article-header", "sitemap-list", "article-footer"]
+}
