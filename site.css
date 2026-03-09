@@ -262,14 +262,18 @@ filter: brightness(0) invert(1);
 }
 @media (max-width: 600px) {
 .footer-contact {
-gap: 0.5rem;
-padding: 1.25rem 0.5rem;
+flex-direction: column;
+gap: 1.1rem;
 }
 .footer-contact > * {
-font-size: 0.78rem;
+width: 100%;
+max-width: 100%;
 }
 .footer-contact > * + * {
-padding-left: 0.5rem;
+border-left: none;
+border-top: 1px solid rgba(255,255,255,0.12);
+padding-left: 0;
+padding-top: 1.1rem;
 }
 }
 .footer-links {
