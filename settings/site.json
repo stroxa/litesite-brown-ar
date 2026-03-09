@@ -4,9 +4,9 @@
   "cachePrefix": "corbaci-ar",
   "lang": "ar",
   "langSwitch": [
-    { "label": "TR", "url": "https://corbaci.com",    "lang": "tr" },
-    { "label": "EN", "url": "https://corbaci.com/en", "lang": "en" },
-    { "label": "AR", "url": "https://corbaci.com/ar", "lang": "ar" }
+    { "label": "TR", "url": "https://tr.dev.template.litesite.anatolia.solutions", "lang": "tr" },
+    { "label": "EN", "url": "https://en.dev.template.litesite.anatolia.solutions", "lang": "en" },
+    { "label": "AR", "url": "https://ar.dev.template.litesite.anatolia.solutions", "lang": "ar" }
   ],
   "rootPages": ["index", "404"],
   "pagesDir": "pages",
