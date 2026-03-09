@@ -27,6 +27,19 @@ html[lang="ar"] .pdt {
   text-align: right;
 }
 
+html[lang="ar"] .pdt > h1 {
+  text-align: center;
+}
+
+html[lang="ar"] .tabs {
+  text-align: right;
+}
+
+html[lang="ar"] .tab-specs th,
+html[lang="ar"] .tab-specs td {
+  text-align: right;
+}
+
 html[lang="ar"] .pdt > b {
   flex-direction: row-reverse;
 }
