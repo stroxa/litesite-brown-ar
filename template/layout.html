@@ -8,18 +8,19 @@
     <meta name="keywords" content="{{keywords}}">
     <link rel="canonical" href="{{canonical}}">
     {{hreflang}}
-    <link rel="stylesheet" href="/site.css" />
+    {{preload_hint}}
+    {{css}}
     <link rel="icon" href="/favicon.png" type="image/png"/>
   </head>
   <body>
     <section class="off">{{offline_warning}}</section>
     <header>
-      <a href="/" class="logo-link"><img src="/logo.png" alt="{{slogan}}" title="{{slogan}}" /><span class="logo-brand">Çorbacı</span></a>
+      <a href="/" class="logo-link"><img src="/logo.webp" alt="{{slogan}}" title="{{slogan}}" /><span class="logo-brand">{{brand}}</span></a>
       {{nav}}
     </header>
     <main>{{main}}</main>
     <section id="basket"></section>
     {{footer}}
-    <script src="/site.js"></script>{{extra_scripts}}
+    <script src="/site.js" defer></script>{{extra_scripts}}
   </body>
 </html>

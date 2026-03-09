@@ -76,16 +76,22 @@ build_images() {
     fi
   fi
 
-  for dir in "$OUTPUT_DIR/img/pages" "$OUTPUT_DIR/img/products"; do
-    [ -d "$dir" ] || continue
-    for jpg in "$dir"/*.jpg; do
-      [ -f "$jpg" ] || continue
-      base="${jpg%.jpg}"
-
-      [ -f "${base}.webp" ] || ffmpeg -y -i "$jpg" -c:v libwebp -quality 99 "${base}.webp" 2>/dev/null
-      [ -f "${base}-k.webp" ] || ffmpeg -y -i "$jpg" -vf "scale=20:-1,boxblur=2:1" -c:v libwebp -quality 88 "${base}-k.webp" 2>/dev/null
-    done
+  for jpg in "$OUTPUT_DIR/img/pages"/*.jpg; do
+    [ -f "$jpg" ] || continue
+    base="${jpg%.jpg}"
+    [ -f "${base}.webp" ] || ffmpeg -y -i "$jpg" -c:v libwebp -quality 80 "${base}.webp" 2>/dev/null
+    [ -f "${base}-k.webp" ] || ffmpeg -y -i "$jpg" -vf "scale=20:-1,boxblur=2:1" -c:v libwebp -quality 88 "${base}-k.webp" 2>/dev/null
   done
+
+  for jpg in "$OUTPUT_DIR/img/products"/*.jpg; do
+    [ -f "$jpg" ] || continue
+    base="${jpg%.jpg}"
+    [ -f "${base}.webp" ] || ffmpeg -y -i "$jpg" -vf "scale=800:-1" -c:v libwebp -quality 80 "${base}.webp" 2>/dev/null
+    [ -f "${base}-k.webp" ] || ffmpeg -y -i "$jpg" -vf "scale=20:-1,boxblur=2:1" -c:v libwebp -quality 88 "${base}-k.webp" 2>/dev/null
+  done
+
+  [ -f "$OUTPUT_DIR/logo.webp" ] || ffmpeg -y -i "$OUTPUT_DIR/logo.png" -vf "scale=-1:200" -c:v libwebp -quality 90 "$OUTPUT_DIR/logo.webp" 2>/dev/null
+
   echo "images processed"
 }
 

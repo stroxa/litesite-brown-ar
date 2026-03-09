@@ -419,7 +419,7 @@ build_hero() {
   if [ "$hero_lazy" = "1" ]; then
     img_tag="<img src=\"$(blur_src "/img/pages/$hero_img")\" data-src=\"/img/pages/$hero_img\" loading=\"lazy\" alt=\"${hero_line1}\">"
   else
-    img_tag="<img src=\"/img/pages/$hero_img\" alt=\"${hero_line1}\">"
+    img_tag="<img src=\"/img/pages/$hero_img\" alt=\"${hero_line1}\" fetchpriority=\"high\">"
   fi
 
   local tpl
@@ -808,6 +808,15 @@ build_pages() {
       extra=$'\n    '"<script type=\"application/ld+json\">${schema}</script>"
     fi
 
+    local preload_hint=""
+    local hero_key
+    hero_key=$(sed -n 's/.*"hero:\([^"]*\)".*/\1/p' "$pj" | head -1)
+    if [ -n "$hero_key" ]; then
+      local hero_img_name
+      hero_img_name=$(json_nested "$SITE_JSON" "$hero_key" img)
+      [ -n "$hero_img_name" ] && preload_hint="<link rel=\"preload\" as=\"image\" href=\"/img/pages/${hero_img_name}\">"
+    fi
+
     apply_layout "$TEMPLATE_DIR/layout.html" \
       "lang" "$SITE_LANG" \
       "title" "$title" \
@@ -815,6 +824,8 @@ build_pages() {
       "keywords" "$keys" \
       "canonical" "$canonical" \
       "hreflang" "$hreflang" \
+      "preload_hint" "$preload_hint" \
+      "css" "$CSS_INLINE" \
       "nav" "$hmenu" \
       "main" "$main_html" \
       "offline_warning" "$L_OFFLINE" \
@@ -885,6 +896,8 @@ build_products() {
       "keywords" "$keys" \
       "canonical" "$canonical" \
       "hreflang" "$hreflang" \
+      "preload_hint" "" \
+      "css" "$CSS_INLINE" \
       "nav" "$hmenu" \
       "main" "$product_html" \
       "offline_warning" "$L_OFFLINE" \
@@ -1001,6 +1014,7 @@ inject_basket_config() {
 # ============================================
 
 bash "$TEMPLATE_DIR/process-template.sh" "$TEMPLATE_DIR" "$SETTINGS_DIR" "$OUTPUT_DIR"
+CSS_INLINE="<style>$(cat "$OUTPUT_DIR/site.css")</style>"
 inject_product_catalog
 inject_basket_config
 init_layout
