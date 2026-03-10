@@ -66,6 +66,8 @@
     "delete": "حذف",
     "unit": "الكمية",
     "whatsAppOrder": "الطلب عبر واتساب",
-    "whatsAppGreeting": "مرحباً، أرغب في تقديم طلب:"
+    "whatsAppGreeting": "مرحباً، أرغب في تقديم طلب:",
+    "telegramOrder": "أرسل طلبك عبر تيليجرام",
+    "telegramGreeting": "مرحباً، أرغب في تقديم طلب:"
   }
 }

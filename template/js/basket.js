@@ -11,15 +11,17 @@ let BASKET_CONFIG = {};
   let shippingWarningText = C.shippingWarning || "";
   let currencySymbol = C.currency || "\u20BA";
   let waNumber = C.waNumber || "";
+  let tgUsername = C.tgUsername || "";
   let labels = C.labels || {};
   let L = function(k) { return labels[k]; };
 
   let addToBasketText = L("addToBasket");
   let badge;
   let basketOpen = false;
-  let navEl;
 
   let emptyEl, descEl, wrapEl, toggleBtnEl, toggleInfoEl, contentEl, itemsEl, totalsEl;
+  let lastItems, lastSubtotal, lastShipping, lastTotal;
+  let cachedLinks;
 
   function getCart() {
     let params = new URLSearchParams(location.search);
@@ -49,15 +51,15 @@ let BASKET_CONFIG = {};
     render();
   }
 
-  function getTotalQty() {
-    let cart = getCart();
+  function getTotalQty(cart) {
+    if (!cart) { cart = getCart(); }
     let total = 0;
     for (let id in cart) total += cart[id];
     return total;
   }
 
-  function getItems() {
-    let cart = getCart();
+  function getItems(cart) {
+    if (!cart) { cart = getCart(); }
     let items = [];
     for (let id in cart) {
       let prod = PRODUCTS[id];
@@ -93,14 +95,14 @@ let BASKET_CONFIG = {};
   }
 
   function render() {
-    renderButtons();
-    renderBadge();
-    renderBasket();
+    let cart = getCart();
+    renderButtons(cart);
+    renderBadge(cart);
+    renderBasket(cart);
     updateLinks();
   }
 
-  function renderButtons() {
-    let cart = getCart();
+  function renderButtons(cart) {
     let buttons = document.querySelectorAll("button[data-id]");
     for (let i = 0; i < buttons.length; i++) {
       let btn = buttons[i];
@@ -110,7 +112,7 @@ let BASKET_CONFIG = {};
         btn.className = "qty-ctrl";
         empty(btn);
         let minus = actionImg("/img/minus.png", "-", "minus", id);
-        let qtyEl = txt(span, toAr(qty) + " " + L("unit"));
+        let qtyEl = txt(span, qty + " " + L("unit"));
         let plus = actionImg("/img/plus.png", "+", "plus", id);
         btn.append(minus, qtyEl, plus);
       } else {
@@ -135,14 +137,12 @@ let BASKET_CONFIG = {};
     document.querySelector("header").append(badge);
   }
 
-  function renderBadge() {
-    let total = getTotalQty();
-    badge.querySelector("span").textContent = toAr(total);
+  function renderBadge(cart) {
+    let total = getTotalQty(cart);
+    badge.querySelector("span").textContent = total;
     if (total > 0) { show(badge); }
     else { hide(badge); }
   }
-
-  function updateBadgePosition() {}
 
   function initBasketDOM() {
     emptyEl = div("empty hidden");
@@ -165,7 +165,6 @@ let BASKET_CONFIG = {};
       if (basketOpen) { show(contentEl); }
       else { hide(contentEl); }
       toggleBtnEl.classList.toggle("open", basketOpen);
-      updateBadgePosition();
     });
     wrapEl.append(toggleBtnEl);
 
@@ -176,14 +175,17 @@ let BASKET_CONFIG = {};
 
     let waBtn = txt(button, L("whatsAppOrder"), "wa");
     waBtn.addEventListener("click", function() {
-      let items = getItems();
-      let subtotal = 0;
-      for (let i = 0; i < items.length; i++) subtotal += items[i].price * items[i].quantity;
-      let shipping = calculateShippingPrice(items);
-      let total = subtotal + shipping;
-      sendWhatsApp(items, subtotal, shipping, total);
+      if (lastItems) { sendWhatsApp(lastItems, lastSubtotal, lastShipping, lastTotal); }
     });
     contentEl.append(waBtn);
+
+    if (tgUsername) {
+      let tgBtn = txt(button, L("telegramOrder"), "tg");
+      tgBtn.addEventListener("click", function() {
+        if (lastItems) { sendTelegram(lastItems, lastSubtotal, lastShipping, lastTotal); }
+      });
+      contentEl.append(tgBtn);
+    }
 
     if (waWarningText) {
       let warn = h6();
@@ -195,8 +197,8 @@ let BASKET_CONFIG = {};
     basketSection.append(wrapEl);
   }
 
-  function renderBasket() {
-    let items = getItems();
+  function renderBasket(cart) {
+    let items = getItems(cart);
 
     if (items.length === 0) {
       show(emptyEl);
@@ -205,7 +207,6 @@ let BASKET_CONFIG = {};
       basketOpen = false;
       hide(contentEl);
       toggleBtnEl.classList.remove("open");
-      updateBadgePosition();
       return;
     }
 
@@ -218,11 +219,12 @@ let BASKET_CONFIG = {};
 
     empty(itemsEl);
 
-    let subtotal = 0;
+    let subtotal = 0, totalQty = 0;
     for (let i = 0; i < items.length; i++) {
       let item = items[i];
       let lineTotal = item.price * item.quantity;
       subtotal += lineTotal;
+      totalQty += item.quantity;
 
       let row = div();
 
@@ -231,20 +233,23 @@ let BASKET_CONFIG = {};
       let qc = div("qty-ctrl");
       let qMinus = actionImg("/img/minus.png", "-", "minus", item.id);
       let qPlus = actionImg("/img/plus.png", "+", "plus", item.id);
-      qc.append(qMinus, txt(span, toAr(item.quantity)), qPlus);
+      qc.append(qMinus, txt(span, item.quantity), qPlus);
 
       row.append(del, img("/img/products/" + item.img, item.name), txt(b, item.name), qc, txt(span, fmt(lineTotal) + " " + currencySymbol));
       itemsEl.append(row);
     }
 
-    let totalQty = 0;
-    for (let q = 0; q < items.length; q++) { totalQty += items[q].quantity; }
-    toggleInfoEl.textContent = "(" + toAr(totalQty) + " " + L("itemSuffix") + " " + L("for") + " " + L("total") + " " + fmt(subtotal) + " " + currencySymbol + ")";
+    toggleInfoEl.textContent = "(" + totalQty + " " + L("itemSuffix") + " " + L("for") + " " + L("total") + " " + fmt(subtotal) + " " + currencySymbol + ")";
 
     empty(totalsEl);
 
     let shipping = calculateShippingPrice(items);
     let total = subtotal + shipping;
+
+    lastItems = items;
+    lastSubtotal = subtotal;
+    lastShipping = shipping;
+    lastTotal = total;
 
     totalsEl.append(makeRow(L("subtotal") + ":", fmt(subtotal) + " " + currencySymbol));
     totalsEl.append(makeRow(L("shipping") + ":", shipping > 0 ? fmt(shipping) + " " + currencySymbol : L("freeShipping")));
@@ -252,38 +257,48 @@ let BASKET_CONFIG = {};
       totalsEl.append(txt(small, shippingWarningText));
     }
     totalsEl.append(makeRow(L("total") + ":", fmt(total) + " " + currencySymbol, "total"));
-
-    updateBadgePosition();
   }
 
   function updateLinks() {
     let qs = location.search;
-    let links = document.querySelectorAll("a[href]");
-    for (let i = 0; i < links.length; i++) {
-      let link = links[i];
-      let href = link.getAttribute("href");
-      if (!href) { continue; }
-      if (href.charAt(0) === "#") { continue; }
-      if (href.indexOf("://") !== -1) { continue; }
-      if (href.indexOf("mailto:") === 0) { continue; }
-      if (href.indexOf("tel:") === 0) { continue; }
-      let hashPos = href.indexOf("#");
-      let hash = hashPos !== -1 ? href.substring(hashPos) : "";
-      let base = hashPos !== -1 ? href.substring(0, hashPos) : href;
-      base = base.split("?")[0];
-      link.setAttribute("href", base + qs + hash);
+    if (!cachedLinks) {
+      let all = document.querySelectorAll('a[href^="/"], a[href^="./"], a[href^="../"]');
+      cachedLinks = [];
+      for (let i = 0; i < all.length; i++) {
+        let href = all[i].getAttribute("href");
+        let hashPos = href.indexOf("#");
+        cachedLinks.push({
+          el: all[i],
+          base: (hashPos !== -1 ? href.substring(0, hashPos) : href).split("?")[0],
+          hash: hashPos !== -1 ? href.substring(hashPos) : ""
+        });
+      }
+    }
+    for (let i = 0; i < cachedLinks.length; i++) {
+      let l = cachedLinks[i];
+      l.el.setAttribute("href", l.base + qs + l.hash);
     }
   }
 
-  function sendWhatsApp(items, subtotal, shipping, total) {
-    let msg = L("whatsAppGreeting") + "\n";
+  function buildOrderMessage(items, subtotal, shipping, total, greetingKey) {
+    let msg = L(greetingKey) + "\n";
     for (let i = 0; i < items.length; i++) {
       msg += items[i].quantity + "x " + items[i].name + " - " + fmt(items[i].price * items[i].quantity) + " " + currencySymbol + "\n";
     }
     msg += L("subtotal") + ": " + fmt(subtotal) + " " + currencySymbol + "\n";
     msg += L("shipping") + ": " + (shipping > 0 ? fmt(shipping) + " " + currencySymbol : L("freeShipping")) + "\n";
     msg += L("total") + ": " + fmt(total) + " " + currencySymbol;
+    return msg;
+  }
+
+  function sendWhatsApp(items, subtotal, shipping, total) {
+    let msg = buildOrderMessage(items, subtotal, shipping, total, "whatsAppGreeting");
     window.open("https://wa.me/" + waNumber + "?text=" + encodeURIComponent(msg), "_blank");
+  }
+
+  function sendTelegram(items, subtotal, shipping, total) {
+    let msg = buildOrderMessage(items, subtotal, shipping, total, "telegramGreeting");
+    window.open("https://t.me/" + tgUsername + "?text=" + encodeURIComponent(msg), "_blank");
   }
 
   document.addEventListener("click", function(e) {
@@ -305,12 +320,9 @@ let BASKET_CONFIG = {};
   });
 
   createBadge();
-  navEl = document.querySelector("nav");
   let fb = document.querySelector("button[data-id]");
   if (fb) { addToBasketText = fb.textContent.trim(); }
   initBasketDOM();
   if (getTotalQty() > 0) { basketOpen = true; }
   render();
-  window.addEventListener("scroll", updateBadgePosition, { passive: true });
-  window.addEventListener("resize", updateBadgePosition, { passive: true });
 })();

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# --- CLI Arguments ---
 TEMPLATE_DIR="template"
 SETTINGS_DIR="settings"
 OUTPUT_DIR="."
@@ -17,7 +16,15 @@ done
 cd "$(dirname "$0")"
 source "$TEMPLATE_DIR/helper.sh"
 
-# --- Settings ---
+# Settings
+# Globals set by init_layout() — used across build functions:
+#   L_EMAIL, L_LEGAL, L_SLOGAN, L_PHONE, L_BRAND  (from company.json)
+#   L_YEAR          (current year)
+#   L_OFFLINE       (from site.json offlineWarning)
+#   L_SOCIAL        (HTML string of social media links)
+#   L_HREFLANGS     (space-separated "lang|url" pairs, set by parse_hreflangs)
+#   L_MNAMES[]      (page names with showOnHeaderMenu flag)
+#   L_MSHORTS[]     (short titles for header menu pages)
 SITE_JSON="$SETTINGS_DIR/site.json"
 COMPANY_JSON="$SETTINGS_DIR/company.json"
 
@@ -57,7 +64,6 @@ load_product_sections() {
 
 [ "$IS_CATEGORY_COLLAPSABLE" = "true" ] && load_product_sections
 
-# --- Parts Content Builder ---
 build_main() {
   local file="$1"
   grep -q '"parts"' "$file" || return
@@ -102,7 +108,6 @@ build_main() {
   printf '%s' "${html//\\\"/\"}"
 }
 
-# --- Contact Builder (E7) ---
 build_contact() {
   local file="$COMPANY_JSON"
   local map=$(json_val "$file" map)
@@ -121,17 +126,7 @@ build_contact() {
   html+="<h3>${legal}</h3>"
 
   html+="<div><img src=\"/img/address.png\" alt=\"${lbl_address}\"><p>"
-  local in_addr=0 first=1
-  while IFS= read -r line; do
-    [[ "$line" == *'"address"'* ]] && { in_addr=1; continue; }
-    [ $in_addr -eq 0 ] && continue
-    [[ "$line" == *']'* ]] && break
-    local v=$(echo "$line" | sed -n 's/^[[:space:]]*"\(.*\)"[[:space:],]*$/\1/p')
-    if [ -n "$v" ]; then
-      [ $first -eq 0 ] && html+="<br>"
-      html+="${v}"; first=0
-    fi
-  done < "$file"
+  html+=$(read_address "$file" "<br>")
   html+="</p></div>"
 
   html+="<a href=\"tel:${tel}\"><img src=\"/img/phone.png\" alt=\"${lbl_phone}\"><p>${phone}</p></a>"
@@ -142,7 +137,6 @@ build_contact() {
   printf '%s' "$html"
 }
 
-# --- Sitemap Products: grouped by category ---
 build_sitemap_products_grouped() {
   local html=""
   for section in "${PRODUCT_SECTIONS[@]}"; do
@@ -159,7 +153,6 @@ build_sitemap_products_grouped() {
   printf '%s' "$html"
 }
 
-# --- Sitemap Products: flat list ---
 build_sitemap_products_flat() {
   local html="<ul>"
   for pj in "$SETTINGS_DIR"/products/*.json; do
@@ -171,7 +164,6 @@ build_sitemap_products_flat() {
   printf '%s' "$html"
 }
 
-# --- Sitemap HTML Builder (E8) ---
 build_sitemap_html() {
   local lbl_pages=$(json_label pages)
   local lbl_products=$(json_label products)
@@ -201,7 +193,6 @@ build_sitemap_html() {
   printf '%s' "$html"
 }
 
-# --- Sitemap XML ---
 build_sitemap_xml() {
   local xml='<?xml version="1.0" encoding="UTF-8"?>'
   xml+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
@@ -230,7 +221,6 @@ build_sitemap_xml() {
   echo "sitemap.xml built"
 }
 
-# --- Footer Builder ---
 build_footer() {
   local lang_nav="$1"
   local tpl=$(<"$TEMPLATE_DIR/partials/footer.html")
@@ -238,14 +228,7 @@ build_footer() {
   local email=$(json_val "$COMPANY_JSON" email)
   local phone_cleaned=$(echo "$phone" | tr -d '+ ')
 
-  local addr="" in_addr=0
-  while IFS= read -r line; do
-    [[ "$line" == *'"address"'* ]] && { in_addr=1; continue; }
-    [ $in_addr -eq 0 ] && continue
-    [[ "$line" == *']'* ]] && break
-    local v=$(echo "$line" | sed -n 's/^[[:space:]]*"\(.*\)"[[:space:],]*$/\1/p')
-    [ -n "$v" ] && { [ -n "$addr" ] && addr+="<br>"; addr+="$v"; }
-  done < "$COMPANY_JSON"
+  local addr=$(read_address "$COMPANY_JSON" "<br>")
 
   render_template "$tpl" \
     "slogan"        "$L_SLOGAN" \
@@ -261,7 +244,6 @@ build_footer() {
     "copyright"     "${L_LEGAL} © ${L_YEAR}"
 }
 
-# --- Footer Link Builder ---
 build_footer_link() {
   local html=""
   for pj in "$SETTINGS_DIR"/pages/*.json; do
@@ -274,7 +256,6 @@ build_footer_link() {
   [ -n "$html" ] && printf '<div class="footer-links">%s</div>' "$html"
 }
 
-# --- Init Layout (E2) ---
 init_layout() {
   L_EMAIL=$(json_val "$COMPANY_JSON" email)
   L_LEGAL=$(json_val "$COMPANY_JSON" legalName)
@@ -289,12 +270,15 @@ init_layout() {
   local fb=$(json_val "$COMPANY_JSON" facebook)
   local ln=$(json_val "$COMPANY_JSON" linkedin)
   local wa=$(echo "$L_PHONE" | tr -d '+ ')
+  local tg=$(json_val "$COMPANY_JSON" telegram)
+  local tg_clean="${tg#@}"
 
   L_SOCIAL=""
   [ "$ig" != "#" ] && L_SOCIAL+="<a href=\"${ig}\" target=\"_blank\"><img src=\"/img/instagram.png\" alt=\"Instagram\"></a>"
   [ "$fb" != "#" ] && L_SOCIAL+="<a href=\"${fb}\" target=\"_blank\"><img src=\"/img/facebook.png\" alt=\"Facebook\"></a>"
   [ "$ln" != "#" ] && L_SOCIAL+="<a href=\"${ln}\" target=\"_blank\"><img src=\"/img/linkedin.png\" alt=\"LinkedIn\"></a>"
   [ -n "$wa" ] && L_SOCIAL+="<a href=\"https://wa.me/${wa}\" target=\"_blank\"><img src=\"/img/whatsapp.png\" alt=\"WhatsApp\"></a>"
+  [ -n "$tg_clean" ] && L_SOCIAL+="<a href=\"https://t.me/${tg_clean}\" target=\"_blank\"><img src=\"/img/telegram.png\" alt=\"Telegram\"></a>"
 
   L_MNAMES=()
   L_MSHORTS=()
@@ -307,7 +291,6 @@ init_layout() {
 
 }
 
-# --- Language Nav Builder ---
 build_lang_nav() {
   local path="$1"
   local html="" in_switch=0
@@ -339,7 +322,6 @@ build_lang_nav() {
   [ -n "$html" ] && printf '<span class="lang">%s</span>' "$html"
 }
 
-# --- SEO Helpers (canonical + hreflang) ---
 parse_hreflangs() {
   L_HREFLANGS=""
   local in_switch=0
@@ -376,7 +358,6 @@ build_seo_tags() {
   printf '%s' "$html"
 }
 
-# --- Header Menu Builder (E3) ---
 build_hmenu() {
   [ ${#L_MNAMES[@]} -eq 0 ] && return
 
@@ -392,7 +373,6 @@ build_hmenu() {
   printf '<nav><div>%s</div></nav>' "$links"
 }
 
-# --- Hero Builder (H4, H5) ---
 build_hero() {
   local data_key="$1"
   local hero_img=$(json_nested "$SITE_JSON" "$data_key" img)
@@ -414,7 +394,6 @@ build_hero() {
     text_idx=$((text_idx + 1))
   done < <(json_nested_array "$SITE_JSON" "$data_key" text)
 
-  # Build img tag based on lazy flag (H4)
   local img_tag
   if [ "$hero_lazy" = "1" ]; then
     img_tag="<img src=\"$(blur_src "/img/pages/$hero_img")\" data-src=\"/img/pages/$hero_img\" loading=\"lazy\" alt=\"${hero_line1}\">"
@@ -432,7 +411,6 @@ build_hero() {
     "hero_btn" "$hero_btn"
 }
 
-# --- Partial Renderer ---
 render_partial() {
   local partial_spec="$1" page_json="$2"
   local name="${partial_spec%%:*}"
@@ -453,7 +431,7 @@ render_partial() {
       build_sitemap_html
       ;;
     article-header)
-      # H3: isAllProductsPage uses h4 + slogan, others use h2 + short title
+      # isAllProductsPage uses h4 + slogan, others use h2 + short title
       local heading_tag="h2"
       local page_heading
       if json_flag "$page_json" isAllProductsPage; then
@@ -466,7 +444,7 @@ render_partial() {
       printf '<article><%s>%s</%s>' "$heading_tag" "$page_heading" "$heading_tag"
       ;;
     page-image)
-      # E11: Only render if image file exists
+      # Only render if image file exists
       local pname=$(basename "$page_json" .json)
       if [ -f "$OUTPUT_DIR/img/pages/${pname}.webp" ]; then
         local tpl
@@ -491,7 +469,6 @@ render_partial() {
   esac
 }
 
-# --- Build Main Content from Partials ---
 build_main_content() {
   local page_json="$1"
   local html=""
@@ -509,7 +486,6 @@ build_main_content() {
   printf '%s' "$html"
 }
 
-# --- Single product card <li> ---
 build_product_card_item() {
   local pj="$1"
   local add_to_basket="$2"
@@ -530,7 +506,6 @@ build_product_card_item() {
   printf '%s' "$html"
 }
 
-# --- Product cards grouped by category ---
 build_product_cards_grouped() {
   local add_to_basket=$(json_label addToBasket)
   local html=""
@@ -558,7 +533,6 @@ build_product_cards_grouped() {
   printf '%s' "$html"
 }
 
-# --- Product cards flat list ---
 build_product_cards_flat() {
   local add_to_basket=$(json_label addToBasket)
   local html="<ul class=\"prd\">"
@@ -569,7 +543,6 @@ build_product_cards_flat() {
   printf '%s' "$html"
 }
 
-# --- Product Cards Builder — dispatcher (E12) ---
 build_product_cards() {
   if [ "$IS_CATEGORY_COLLAPSABLE" = "true" ]; then
     build_product_cards_grouped
@@ -578,7 +551,6 @@ build_product_cards() {
   fi
 }
 
-# --- Tabs Builder ---
 build_tabs() {
   local pj="$1"
   local lbl_desc=$(json_label productDescTab)
@@ -616,7 +588,6 @@ build_tabs() {
   printf '%s' "$html"
 }
 
-# --- Additional Properties for Schema ---
 build_add_props() {
   local props="" first=1
   while IFS= read -r line; do
@@ -630,7 +601,6 @@ build_add_props() {
   printf '%s' "$props"
 }
 
-# --- Schema Builder ---
 build_schema() {
   local pj="$1"
 
@@ -721,7 +691,6 @@ build_schema() {
   printf '%s' "$s"
 }
 
-# --- Home Page Schema (@graph: Organization + WebSite + ItemList) ---
 build_home_schema() {
   local phone=$(json_val "$COMPANY_JSON" phone)
   local tel=$(echo "$phone" | tr -d ' ')
@@ -730,16 +699,7 @@ build_home_schema() {
   local desc=$(json_val "$COMPANY_JSON" description)
   local brand=$(json_val "$COMPANY_JSON" brand)
 
-  # Build address string
-  local addr=""
-  local in_addr=0
-  while IFS= read -r line; do
-    [[ "$line" == *'"address"'* ]] && { in_addr=1; continue; }
-    [ $in_addr -eq 0 ] && continue
-    [[ "$line" == *']'* ]] && break
-    local v=$(echo "$line" | sed -n 's/^[[:space:]]*"\(.*\)"[[:space:],]*$/\1/p')
-    [ -n "$v" ] && { [ -n "$addr" ] && addr+=", "; addr+="$v"; }
-  done < "$COMPANY_JSON"
+  local addr=$(read_address "$COMPANY_JSON" ", ")
 
   # Social links
   local ig=$(json_val "$COMPANY_JSON" instagram)
@@ -782,7 +742,6 @@ build_home_schema() {
   printf '%s' "$s"
 }
 
-# --- Build Pages ---
 build_pages() {
   mkdir -p "$OUTPUT_DIR/$PAGES_DIR"
 
@@ -839,7 +798,6 @@ build_pages() {
   echo "pages built"
 }
 
-# --- Build Products (E6) ---
 build_products() {
   local addToBasket=$(json_label addToBasket)
   local taxIncluded=$(json_val "$SITE_JSON" taxIncluded)
@@ -911,7 +869,6 @@ build_products() {
   echo "products built"
 }
 
-# --- Service Worker Builder ---
 build_sw() {
   local core="'/','/site.css','/site.js','/logo.png','/favicon.png','/favicon.ico'"
 
@@ -951,7 +908,6 @@ build_sw() {
   echo "sw.js built"
 }
 
-# --- Product Catalog Injection (E1) ---
 inject_product_catalog() {
   local js="let PRODUCTS={"
   local first=1
@@ -973,7 +929,6 @@ inject_product_catalog() {
   echo "product catalog injected"
 }
 
-# --- Basket Config Injection ---
 inject_basket_config() {
   local warning=$(json_val "$SITE_JSON" basketWarning)
   local wa_warning=$(json_val "$SITE_JSON" whatsAppWarning)
@@ -989,12 +944,15 @@ inject_basket_config() {
   js+=",\"shippingWarning\":\"${shipping_warning}\""
   js+=",\"currency\":\"${SITE_CURRENCY_SYMBOL}\""
   js+=",\"waNumber\":\"${wa_number}\""
+  local tg_username=$(json_val "$COMPANY_JSON" telegram)
+  tg_username="${tg_username#@}"
+  [ -n "$tg_username" ] && js+=",\"tgUsername\":\"${tg_username}\""
   js+=",\"productsPage\":\"${products_page}\""
 
   # Build labels object
   js+=",\"labels\":{"
   local first=1
-  local label_keys="addToBasket basket myBasket itemSuffix for openBasket closeBasket subtotal shipping freeShipping total delete unit whatsAppOrder whatsAppGreeting emptyBasket productsLinkText emptyBasketDesc"
+  local label_keys="addToBasket basket myBasket itemSuffix for openBasket closeBasket subtotal shipping freeShipping total delete unit whatsAppOrder whatsAppGreeting telegramOrder telegramGreeting emptyBasket productsLinkText emptyBasketDesc"
   for k in $label_keys; do
     local v=$(json_label "$k")
     if [ -n "$v" ]; then
@@ -1009,12 +967,10 @@ inject_basket_config() {
   echo "basket config injected"
 }
 
-# ============================================
-# MAIN EXECUTION (E5: preserved order)
-# ============================================
+# MAIN EXECUTION
 
 bash "$TEMPLATE_DIR/process-template.sh" "$TEMPLATE_DIR" "$SETTINGS_DIR" "$OUTPUT_DIR"
-CSS_INLINE="<style>$(cat "$OUTPUT_DIR/site.css")</style>"
+CSS_INLINE='<link rel="stylesheet" href="/site.css">'
 inject_product_catalog
 inject_basket_config
 init_layout

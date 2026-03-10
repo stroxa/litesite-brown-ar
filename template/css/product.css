@@ -1,4 +1,3 @@
-/* ── Product section accordion ──────────────────── */
 details {
   margin: 1.5rem 0 0;
 }
@@ -9,16 +8,14 @@ details > summary {
   display: flex;
   align-items: center;
   padding: 1rem 1.25rem;
-  background: #fff;
-  border-bottom: 2px solid #5a2c12;
+  background: var(--white);
+  border-bottom: 2px solid var(--border-dark);
   border-radius: var(--r-md) var(--r-md) 0 0;
-  font-family: var(--font-serif);
   font-size: 1.15rem;
   font-weight: bold;
   color: var(--text);
   user-select: none;
   width: 100%;
-  box-sizing: border-box;
 }
 
 details > summary::-webkit-details-marker {
@@ -44,11 +41,10 @@ details > summary::before {
 details[open] > summary::before {
   content: '−';
   background: var(--accent);
-  color: #fff;
+  color: var(--white);
   border-color: var(--accent);
 }
 
-/* ── Product grid (all-products page) ──────────── */
 ul.prd {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -71,7 +67,6 @@ ul.prd li {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-
 ul.prd a {
   display: block;
   color: inherit;
@@ -89,7 +84,6 @@ ul.prd a img {
 
 ul.prd h3 {
   margin: 0.75rem 1rem 0.3rem;
-  font-family: var(--font-serif);
   font-size: 1rem;
   font-weight: bold;
   color: var(--text);
@@ -128,14 +122,6 @@ ul.prd button {
   transition: background 0.2s;
 }
 
-
-@media (max-width: 600px) {
-  ul.prd {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ── Product detail page ────────────────────── */
 .pdt {
   max-width: 680px;
   margin: 2rem auto;
@@ -156,7 +142,6 @@ ul.prd button {
 
 .pdt > h1 {
   margin: 0 0 0.5rem;
-  font-family: var(--font-serif);
   font-size: clamp(1.2rem, 4vw, 1.6rem);
   font-weight: bold;
   color: var(--text);
@@ -195,8 +180,6 @@ ul.prd button {
   transition: background 0.2s;
 }
 
-
-/* ── Tabs ────────────────────────────────────── */
 .tabs {
   margin-top: 1.75rem;
   text-align: left;
@@ -222,7 +205,6 @@ ul.prd button {
   margin-bottom: -2px;
   transition: color 0.2s, border-color 0.2s;
 }
-
 
 #tab-desc:checked ~ .tab-nav label[for="tab-desc"],
 #tab-specs:checked ~ .tab-nav label[for="tab-specs"] {

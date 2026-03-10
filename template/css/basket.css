@@ -1,9 +1,7 @@
-/* ── Basket hidden state ─────────────────────── */
 #basket .hidden {
   display: none !important;
 }
 
-/* ── Floating basket badge ───────────────────── */
 #basket-badge {
   position: fixed;
   right: 1.25rem;
@@ -17,11 +15,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 20px rgba(139, 94, 60, .4);
+  box-shadow: 0 6px 20px rgba(var(--accent-rgb), .4);
   transition: transform 0.2s, box-shadow 0.2s;
   border: 3px solid var(--surface2);
 }
-
 
 #basket-badge:active {
   transform: scale(0.95);
@@ -39,7 +36,7 @@
   position: absolute;
   top: -6px;
   right: -6px;
-  background: #fff;
+  background: var(--white);
   color: var(--text);
   font-size: 0.9rem;
   font-weight: 700;
@@ -53,7 +50,6 @@
   border: 2px solid var(--surface);
 }
 
-/* ── Qty control (inline) ────────────────────── */
 .qty-ctrl,
 ul.prd button.qty-ctrl,
 .pdt>button.qty-ctrl {
@@ -61,7 +57,7 @@ ul.prd button.qty-ctrl,
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  background: #cdb898;
+  background: var(--border);
   border: none;
   border-radius: 8px;
   padding: 0.25rem;
@@ -87,14 +83,13 @@ ul.prd button.qty-ctrl,
   min-width: 1.5rem;
   text-align: center;
   font-size: 0.85rem;
-  color: #000;
+  color: var(--text);
   white-space: nowrap;
-  background: #cdb898;
+  background: var(--border);
   padding: 0.25rem 0.45rem;
   border-radius: 4px;
 }
 
-/* ── Basket panel ────────────────────────────── */
 #basket {
   position: relative;
   background: var(--bg);
@@ -252,12 +247,7 @@ ul.prd button.qty-ctrl,
 }
 
 #basket .del {
-  position: relative;
-  top: auto;
-  left: auto;
-  transform: none;
   margin-right: 0.4rem;
-  z-index: 1;
   width: 22px;
   height: 22px;
   cursor: pointer;
@@ -303,7 +293,7 @@ ul.prd button.qty-ctrl,
   font-weight: 600;
   color: var(--accent2);
   text-align: center;
-  background: rgba(139, 94, 60, .1);
+  background: rgba(var(--accent-rgb), .1);
   padding: 0.45rem 0.75rem;
   margin: 0.5rem 0;
   border-radius: var(--r-sm);
@@ -321,6 +311,7 @@ ul.prd button.qty-ctrl,
 
 #basket .wa {
   display: block;
+  width: 100%;
   max-width: 340px;
   margin: 1.25rem auto;
   padding: 0.9rem 2rem;
@@ -336,8 +327,29 @@ ul.prd button.qty-ctrl,
   letter-spacing: 0.02em;
 }
 
-
 #basket .wa:active {
+  transform: scale(0.98);
+}
+
+#basket .tg {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto 1.25rem;
+  padding: 0.9rem 2rem;
+  background: #229ED9;
+  color: var(--white);
+  border: none;
+  border-radius: var(--r-md);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.02em;
+}
+
+#basket .tg:active {
   transform: scale(0.98);
 }
 
@@ -365,7 +377,6 @@ ul.prd button.qty-ctrl,
   }
 
   #basket .items>div>b {
-    flex: 1;
     font-size: 0.85rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -385,7 +396,6 @@ ul.prd button.qty-ctrl,
 
   #basket .items>div>span {
     min-width: 4.5rem;
-    text-align: right;
     flex-shrink: 0;
     font-size: 0.9rem;
   }

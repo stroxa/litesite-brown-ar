@@ -25,11 +25,10 @@ self.addEventListener("activate", function(e) {
 self.addEventListener("message", function(e) {
   if (e.data === "cache-all") {
     caches.open(CACHE).then(function(c) {
-      c.addAll(PRODUCTS).then(function() {
-        return c.addAll(PAGES);
-      }, function() {
-        return c.addAll(PAGES);
-      });
+      let urls = PRODUCTS.concat(PAGES);
+      Promise.allSettled(
+        urls.map(function(url) { return c.add(url); })
+      );
     });
   }
 });

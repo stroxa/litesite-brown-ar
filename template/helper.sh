@@ -3,7 +3,7 @@
 
 # --- Minifier ---
 min() {
-  sed 's/^ *//; s/ *$//; /^$/d; s/  */ /g' "$1"
+  sed 's|/\*[^*]*\*\+\([^/][^*]*\*\+\)*/||g; s/^ *//; s/ *$//; /^$/d; s/  */ /g' "$1"
 }
 
 # --- JSON Helpers ---
@@ -43,29 +43,23 @@ json_nested_array() {
     | sed -n 's/.*"\([^"]*\)".*/\1/p'
 }
 
-# --- Arabic-Indic price display conversion ---
-# _price_digit_pass: converts the rightmost remaining Western digit before ₺
-# (digits already converted to Arabic-Indic are matched by [٠-٩]*)
-_price_digit_pass() {
-  sed '
-    s/0\([٠-٩]* ₺\)/٠\1/g
-    s/1\([٠-٩]* ₺\)/١\1/g
-    s/2\([٠-٩]* ₺\)/٢\1/g
-    s/3\([٠-٩]* ₺\)/٣\1/g
-    s/4\([٠-٩]* ₺\)/٤\1/g
-    s/5\([٠-٩]* ₺\)/٥\1/g
-    s/6\([٠-٩]* ₺\)/٦\1/g
-    s/7\([٠-٩]* ₺\)/٧\1/g
-    s/8\([٠-٩]* ₺\)/٨\1/g
-    s/9\([٠-٩]* ₺\)/٩\1/g
-  '
-}
-
-# convert_price_digits: applies 5 passes — handles prices up to 5 digits
-convert_price_digits() {
-  printf '%s' "$1" \
-    | _price_digit_pass | _price_digit_pass | _price_digit_pass \
-    | _price_digit_pass | _price_digit_pass
+# --- Address Reader ---
+# Reads "address" JSON array from a file, joins lines with a separator
+# Usage: read_address "file.json" "<br>" → lines joined with <br>
+#        read_address "file.json" ", "  → lines joined with comma
+read_address() {
+  local file="$1" sep="$2" in_addr=0 result="" first=1
+  while IFS= read -r line; do
+    [[ "$line" == *'"address"'* ]] && { in_addr=1; continue; }
+    [ $in_addr -eq 0 ] && continue
+    [[ "$line" == *']'* ]] && break
+    local v=$(echo "$line" | sed -n 's/^[[:space:]]*"\(.*\)"[[:space:],]*$/\1/p')
+    if [ -n "$v" ]; then
+      [ $first -eq 0 ] && result+="$sep"
+      result+="$v"; first=0
+    fi
+  done < "$file"
+  printf '%s' "$result"
 }
 
 # --- Utility ---
@@ -133,7 +127,5 @@ apply_layout() {
     content="${content//\{\{partial:${partial_name}\}\}/$partial_content}"
   done
 
-  local rendered
-  rendered=$(render_template "$content" "$@")
-  convert_price_digits "$rendered"
+  render_template "$content" "$@"
 }

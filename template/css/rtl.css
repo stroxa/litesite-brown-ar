@@ -52,6 +52,12 @@ html[lang="ar"] .footer-contact {
   flex-direction: row-reverse;
 }
 
+@media (max-width: 600px) {
+  html[lang="ar"] .footer-contact {
+    flex-direction: column;
+  }
+}
+
 html[lang="ar"] .footer-contact div,
 html[lang="ar"] .footer-contact a {
   text-align: right;
