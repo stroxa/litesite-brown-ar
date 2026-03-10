@@ -43,6 +43,14 @@ let _nav = document.querySelector("nav");
 if (_nav) { _nav.addEventListener("click", function(e) {
 if (e.target === this) { this.classList.toggle("open"); }
 }); }
+function parseLocalizedNumber(str) {
+if (!str) { return 0; }
+let normalized = str.replace(/[٠-٩]/g, function(d) {
+return '٠١٢٣٤٥٦٧٨٩'.indexOf(d);
+});
+let num = parseFloat(normalized.replace(/[^0-9.]/g, ''));
+return isNaN(num) ? 0 : num;
+}
 function _el(tag, cls) {
 let e = document.createElement(tag);
 if (cls) { e.className = cls; }
@@ -84,8 +92,20 @@ if (i > 0) { parent.append(document.createElement("br")); }
 parent.append(parts[i]);
 }
 }
-function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+let ARABIC_DIGITS = '٠١٢٣٤٥٦٧٨٩';
+function toArabicDigits(str) {
+return str.replace(/[0-9]/g, function(d) { return ARABIC_DIGITS[d]; });
+}
+function fmt(n) {
+let formatted = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+return toArabicDigits(formatted);
+}
 function empty(el) { el.replaceChildren(); }
+document.addEventListener("DOMContentLoaded", function() {
+document.querySelectorAll("ul.prd b, .pdt > b").forEach(function(el) {
+el.textContent = toArabicDigits(el.textContent);
+});
+});
 function actionImg(src, title, action, id, cls) {
 let e = img(src, title, cls);
 e.setAttribute("data-action", action);
@@ -193,7 +213,7 @@ if (qty > 0) {
 btn.className = "qty-ctrl";
 empty(btn);
 let minus = actionImg("/img/minus.png", "-", "minus", id);
-let qtyEl = txt(span, qty + " " + L("unit"));
+let qtyEl = txt(span, toArabicDigits(String(qty)) + " " + L("unit"));
 let plus = actionImg("/img/plus.png", "+", "plus", id);
 btn.append(minus, qtyEl, plus);
 } else {
@@ -218,7 +238,7 @@ document.querySelector("header").append(badge);
 }
 function renderBadge(cart) {
 let total = getTotalQty(cart);
-badge.querySelector("span").textContent = total;
+badge.querySelector("span").textContent = toArabicDigits(String(total));
 if (total > 0) { show(badge); }
 else { hide(badge); }
 }
@@ -295,11 +315,11 @@ let del = actionImg("/img/delete.png", L("delete"), "delete", item.id, "del");
 let qc = div("qty-ctrl");
 let qMinus = actionImg("/img/minus.png", "-", "minus", item.id);
 let qPlus = actionImg("/img/plus.png", "+", "plus", item.id);
-qc.append(qMinus, txt(span, item.quantity), qPlus);
+qc.append(qMinus, txt(span, toArabicDigits(String(item.quantity))), qPlus);
 row.append(del, img("/img/products/" + item.img, item.name), txt(b, item.name), qc, txt(span, fmt(lineTotal) + " " + currencySymbol));
 itemsEl.append(row);
 }
-toggleInfoEl.textContent = "(" + totalQty + " " + L("itemSuffix") + " " + L("for") + " " + L("total") + " " + fmt(subtotal) + " " + currencySymbol + ")";
+toggleInfoEl.textContent = "(" + toArabicDigits(String(totalQty)) + " " + L("itemSuffix") + " " + L("for") + " " + L("total") + " " + fmt(subtotal) + " " + currencySymbol + ")";
 empty(totalsEl);
 let shipping = calculateShippingPrice(items);
 let total = subtotal + shipping;
@@ -337,7 +357,7 @@ l.el.setAttribute("href", l.base + qs + l.hash);
 function buildOrderMessage(items, subtotal, shipping, total, greetingKey) {
 let msg = L(greetingKey) + "\n";
 for (let i = 0; i < items.length; i++) {
-msg += items[i].quantity + "x " + items[i].name + " - " + fmt(items[i].price * items[i].quantity) + " " + currencySymbol + "\n";
+msg += toArabicDigits(String(items[i].quantity)) + "x " + items[i].name + " - " + fmt(items[i].price * items[i].quantity) + " " + currencySymbol + "\n";
 }
 msg += L("subtotal") + ": " + fmt(subtotal) + " " + currencySymbol + "\n";
 msg += L("shipping") + ": " + (shipping > 0 ? fmt(shipping) + " " + currencySymbol : L("freeShipping")) + "\n";

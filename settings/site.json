@@ -35,7 +35,7 @@
   "assets": {
     "css": ["css/base.css", "css/layout.css",
             "css/page.css", "css/product.css", "css/basket.css", "css/rtl.css"],
-    "js": ["js/lazy.js", "js/off.js", "js/menu.js", "js/helper.js", "js/basket.js"],
+    "js": ["js/lazy.js", "js/off.js", "js/menu.js", "js/parseLocalizedNumber.js", "js/helper.js", "js/basket.js"],
     "cssOutput": "site.css",
     "jsOutput": "site.js"
   },

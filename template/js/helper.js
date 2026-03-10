@@ -46,9 +46,24 @@ function parseBr(text, parent) {
   }
 }
 
-function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+let ARABIC_DIGITS = '٠١٢٣٤٥٦٧٨٩';
+
+function toArabicDigits(str) {
+  return str.replace(/[0-9]/g, function(d) { return ARABIC_DIGITS[d]; });
+}
+
+function fmt(n) {
+  let formatted = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return toArabicDigits(formatted);
+}
 
 function empty(el) { el.replaceChildren(); }
+
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll("ul.prd b, .pdt > b").forEach(function(el) {
+    el.textContent = toArabicDigits(el.textContent);
+  });
+});
 
 function actionImg(src, title, action, id, cls) {
   let e = img(src, title, cls);

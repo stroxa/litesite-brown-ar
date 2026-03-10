@@ -112,7 +112,7 @@ let BASKET_CONFIG = {};
         btn.className = "qty-ctrl";
         empty(btn);
         let minus = actionImg("/img/minus.png", "-", "minus", id);
-        let qtyEl = txt(span, qty + " " + L("unit"));
+        let qtyEl = txt(span, toArabicDigits(String(qty)) + " " + L("unit"));
         let plus = actionImg("/img/plus.png", "+", "plus", id);
         btn.append(minus, qtyEl, plus);
       } else {
@@ -139,7 +139,7 @@ let BASKET_CONFIG = {};
 
   function renderBadge(cart) {
     let total = getTotalQty(cart);
-    badge.querySelector("span").textContent = total;
+    badge.querySelector("span").textContent = toArabicDigits(String(total));
     if (total > 0) { show(badge); }
     else { hide(badge); }
   }
@@ -233,13 +233,13 @@ let BASKET_CONFIG = {};
       let qc = div("qty-ctrl");
       let qMinus = actionImg("/img/minus.png", "-", "minus", item.id);
       let qPlus = actionImg("/img/plus.png", "+", "plus", item.id);
-      qc.append(qMinus, txt(span, item.quantity), qPlus);
+      qc.append(qMinus, txt(span, toArabicDigits(String(item.quantity))), qPlus);
 
       row.append(del, img("/img/products/" + item.img, item.name), txt(b, item.name), qc, txt(span, fmt(lineTotal) + " " + currencySymbol));
       itemsEl.append(row);
     }
 
-    toggleInfoEl.textContent = "(" + totalQty + " " + L("itemSuffix") + " " + L("for") + " " + L("total") + " " + fmt(subtotal) + " " + currencySymbol + ")";
+    toggleInfoEl.textContent = "(" + toArabicDigits(String(totalQty)) + " " + L("itemSuffix") + " " + L("for") + " " + L("total") + " " + fmt(subtotal) + " " + currencySymbol + ")";
 
     empty(totalsEl);
 
@@ -283,7 +283,7 @@ let BASKET_CONFIG = {};
   function buildOrderMessage(items, subtotal, shipping, total, greetingKey) {
     let msg = L(greetingKey) + "\n";
     for (let i = 0; i < items.length; i++) {
-      msg += items[i].quantity + "x " + items[i].name + " - " + fmt(items[i].price * items[i].quantity) + " " + currencySymbol + "\n";
+      msg += toArabicDigits(String(items[i].quantity)) + "x " + items[i].name + " - " + fmt(items[i].price * items[i].quantity) + " " + currencySymbol + "\n";
     }
     msg += L("subtotal") + ": " + fmt(subtotal) + " " + currencySymbol + "\n";
     msg += L("shipping") + ": " + (shipping > 0 ? fmt(shipping) + " " + currencySymbol : L("freeShipping")) + "\n";
