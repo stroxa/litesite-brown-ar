@@ -370,7 +370,7 @@ build_hmenu() {
       links+="<a href=\"${href}\">${L_MSHORTS[$i]}</a>"
     fi
   done
-  printf '<nav><div>%s</div></nav>' "$links"
+  printf '<nav><button id="menu-btn"><img id="menu-icon" src="/img/menu-open.png" alt="menu"></button><div>%s</div></nav>' "$links"
 }
 
 build_hero() {
